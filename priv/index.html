@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+</head>
+<body>
+<div id="sse">
+   <a href="javascript:open()">Otvori ws</a><br/>
+</div>
+
+<textarea id="message" cols="30" rows="10"></textarea>
+
+<button onclick="javascript:send()">Posalji</button>    
+
+<div id="messages">
+</div>
+</body>
+
+<script type="text/javascript">
+var ws = new Object;
+
+function send()
+{
+    var myTextField = document.getElementById('message');
+    ws.send(myTextField.value);
+    console.log('sent');
+}
+
+function open()
+{
+    if (!("WebSocket" in window)) {
+        alert("WebSocket NOT supported by your Browser!");
+        return;
+    }
+    ws = new WebSocket("ws://localhost:8080/websocket");
+    ws.onopen = function() {
+        console.log('connected');
+    };
+    ws.onmessage = function (evt)
+    {
+        var received_msg = evt.data;
+        console.log("Received: " + received_msg);
+        var txt = document.createTextNode("Poruka sa servera: " + received_msg);
+        document.getElementById('messages').appendChild(txt);
+    };
+    ws.onclose = function()
+    {
+        console.log('close');
+    };
+}
+</script>
+
+</html>
